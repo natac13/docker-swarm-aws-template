@@ -284,6 +284,8 @@
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
+          "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
+          "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f"
         ]
       },
@@ -378,6 +380,8 @@
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
+          "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
+          "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f"
         ]
       },
@@ -427,6 +431,8 @@
         "parent": "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
         "embeds": [],
         "iscontainedinside": [
+          "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
+          "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
           "0b630a3e-8b47-4876-bc52-7b0c367e0c8f",
@@ -685,6 +691,22 @@
         },
         "position": {
           "x": 1250,
+          "y": 1250
+        },
+        "z": 0,
+        "embeds": [],
+        "dependson": [
+          "98a59bfc-c0f5-4519-8113-09fbd0af754d",
+          "27392f87-6ffd-40af-89fb-9172209cf6c0"
+        ]
+      },
+      "d50d8804-4d8d-43d2-a9d5-ab0919dca701": {
+        "size": {
+          "width": 60,
+          "height": 60
+        },
+        "position": {
+          "x": 1410,
           "y": 1250
         },
         "z": 0,
@@ -2043,7 +2065,7 @@
                   "# init-aws\n",
                   "docker run --restart=no --log-driver=json-file -d -e DYNAMODB_TABLE=$DYNAMODB_TABLE -v /var/run/docker.sock:/var/run/docker.sock natac13/docker-swarm-init-aws",
                   "\n",
-                  "docker run --restart=always -d -e DYNAMODB_TABLE=$DYNAMODB_TABLE -e LIFECYCLE_QUEUE=$LIFECYCLE_QUEUE -e RUN_VACUUM=$RUN_VACUUM -v /var/run/docker.sock:/var/run/docker.sock natac13/docker-swarm-guide-aws",
+                  "docker run --restart=always -d -e DYNAMODB_TABLE=$DYNAMODB_TABLE -e LIFECYCLE_QUEUE=$LIFECYCLE_QUEUE -e RUN_VACUUM=$RUN_VACUUM -v /var/run/docker.sock:/var/run/docker.sock -v /var/log:/var/log natac13/docker-swarm-guide-aws",
                   "\n",
                   "cfn-signal -e $? --resource ManagerAsg",
                   " --stack ",
@@ -2460,7 +2482,7 @@
     },
     "SwarmAPIPolicy": {
       "Type": "AWS::IAM::Policy",
-      "DependsOn": "ManagerRole",
+      "DependsOn": ["ManagerRole", "WorkerRole"],
       "Properties": {
         "PolicyDocument": {
           "Statement": [
@@ -2480,6 +2502,9 @@
         "Roles": [
           {
             "Ref": "ManagerRole"
+          },
+          {
+            "Ref": "WorkerRole"
           }
         ]
       },
@@ -2784,7 +2809,7 @@
                   "# init-aws\n",
                   "docker run --restart=no --log-driver=json-file -d -e DYNAMODB_TABLE=$DYNAMODB_TABLE -v /var/run/docker.sock:/var/run/docker.sock natac13/docker-swarm-init-aws",
                   "\n",
-                  "docker run --restart=always -d -e DYNAMODB_TABLE=$DYNAMODB_TABLE -e LIFECYCLE_QUEUE=$LIFECYCLE_QUEUE -e RUN_VACUUM=$RUN_VACUUM -v /var/run/docker.sock:/var/run/docker.sock natac13/docker-swarm-guide-aws",
+                  "docker run --restart=always -d -e DYNAMODB_TABLE=$DYNAMODB_TABLE -e LIFECYCLE_QUEUE=$LIFECYCLE_QUEUE -e RUN_VACUUM=$RUN_VACUUM -v /var/run/docker.sock:/var/run/docker.sock -v /var/log:/var/log natac13/docker-swarm-guide-aws",
                   "\n",
                   "cfn-signal -e $? --resource ManagerAsg",
                   " --stack ",
@@ -2997,6 +3022,36 @@
       "Metadata": {
         "AWS::CloudFormation::Designer": {
           "id": "87c898bf-cdd3-4757-abf5-d39b49fbc4c7"
+        }
+      }
+    },
+    "EIPPolicy": {
+      "Type": "AWS::IAM::Policy",
+      "DependsOn": ["ManagerRole", "WorkerRole"],
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": ["ec2:AssociateAddress", "ec2:DisassociateAddress"],
+              "Effect": "Allow",
+              "Resource": "*"
+            }
+          ],
+          "Version": "2012-10-17"
+        },
+        "PolicyName": "swarm-eip-policy",
+        "Roles": [
+          {
+            "Ref": "ManagerRole"
+          },
+          {
+            "Ref": "WorkerRole"
+          }
+        ]
+      },
+      "Metadata": {
+        "AWS::CloudFormation::Designer": {
+          "id": "d50d8804-4d8d-43d2-a9d5-ab0919dca701"
         }
       }
     }

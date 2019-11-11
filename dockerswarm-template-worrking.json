@@ -1349,7 +1349,9 @@
         "GroupDescription": "Manager SecurityGroup",
         "SecurityGroupIngress": [
           {
-            "CidrIp": "0.0.0.0/0",
+            "CidrIp": {
+              "Ref": "SSHLocation"
+            },
             "FromPort": "22",
             "IpProtocol": "tcp",
             "ToPort": "22"
@@ -1446,6 +1448,14 @@
             "FromPort": "0",
             "IpProtocol": "-1",
             "ToPort": "65535"
+          },
+          {
+            "CidrIp": {
+              "Ref": "SSHLocation"
+            },
+            "FromPort": "22",
+            "IpProtocol": "tcp",
+            "ToPort": "22"
           }
         ],
         "VpcId": {
@@ -2816,7 +2826,7 @@
                   "\n",
                   "docker run --restart=always -d -e DYNAMODB_TABLE=$DYNAMODB_TABLE -e LIFECYCLE_QUEUE=$LIFECYCLE_QUEUE -e RUN_VACUUM=$RUN_VACUUM -v /var/run/docker.sock:/var/run/docker.sock -v /var/log:/var/log natac13/docker-swarm-guide-aws",
                   "\n",
-                  "cfn-signal -e $? --resource ManagerAsg",
+                  "cfn-signal -e $? --resource WorkerAsg",
                   " --stack ",
                   {
                     "Ref": "AWS::StackName"

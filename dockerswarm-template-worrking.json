@@ -3037,7 +3037,13 @@
         "PolicyDocument": {
           "Statement": [
             {
-              "Action": ["ec2:AssociateAddress", "ec2:DisassociateAddress"],
+              "Action": [
+                "ec2:ReleaseAddress",
+                "ec2:DisassociateAddress",
+                "ec2:DescribeAddresses",
+                "ec2:AssociateAddress",
+                "ec2:AllocateAddress"
+              ],
               "Effect": "Allow",
               "Resource": "*"
             }

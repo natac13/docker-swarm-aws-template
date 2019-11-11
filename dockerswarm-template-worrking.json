@@ -38,7 +38,7 @@
           "Label": {
             "default": "Swarm Properties"
           },
-          "Parameters": ["KeyName", "EnableCloudWatchLogs"]
+          "Parameters": ["KeyName", "EnableCloudWatchLogs", "SSHLocation"]
         },
         {
           "Label": {
@@ -47,7 +47,8 @@
           "Parameters": [
             "ManagerInstanceType",
             "ManagerDiskSize",
-            "ManagerDiskType"
+            "ManagerDiskType",
+            "EnableSystemPrune"
           ]
         },
         {
@@ -94,6 +95,9 @@
         },
         "WorkerDiskType": {
           "default": "Worker ephemeral storage volume type"
+        },
+        "SSHLocation": {
+          "default": "SSH Ip for access to the EC2 instances."
         }
       }
     },
@@ -1230,7 +1234,8 @@
         "HasDDC": "no",
         "addOn": "base",
         "channel": "stable",
-        "docker": "19.03.4-ce"
+        "docker": "19.03.4-ce",
+        "install": "5:19.03.4~3-0~ubuntu-bionic"
       }
     }
   },
@@ -1979,7 +1984,7 @@
                   "'\n",
                   "export DOCKER_VERSION='",
                   {
-                    "Fn::FindInMap": ["DockerEnvironment", "version", "docker"]
+                    "Fn::FindInMap": ["DockerEnvironment", "version", "install"]
                   },
                   "'\n",
                   "export AWS_REGION='",
@@ -2701,7 +2706,7 @@
                   "apt-get update\n",
                   "apt-get -y install python-pip\n",
                   "pip install https://s3.amazonaws.com/cloudformation-examples/aws-cfn-bootstrap-latest.tar.gz\n",
-                  "cfn-init -v --resource ManagerAsg",
+                  "cfn-init -v --resource WorkerAsg",
                   " --stack ",
                   {
                     "Ref": "AWS::StackName"
@@ -2723,7 +2728,7 @@
                   "'\n",
                   "export DOCKER_VERSION='",
                   {
-                    "Fn::FindInMap": ["DockerEnvironment", "version", "docker"]
+                    "Fn::FindInMap": ["DockerEnvironment", "version", "install"]
                   },
                   "'\n",
                   "export AWS_REGION='",

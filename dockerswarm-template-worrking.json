@@ -1838,7 +1838,7 @@
             "Key": "DOCKER_VERSION",
             "PropagateAtLaunch": true,
             "Value": {
-              "Fn::FindInMap": ["DockerEnvironment", "version", "docker"]
+              "Fn::FindInMap": ["DockerEnvironment", "version", "install"]
             }
           },
           {
